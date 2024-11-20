@@ -1,20 +1,68 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 
 export default function App() {
+  function onMessage() {
+    alert("Hello World");
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
+      <View style={styles.container}>
+        <Text style={styles.label}>App de Tarefas</Text>
+        <TextInput 
+          style={styles.input}
+          placeholder="Nome da tarefa:"
+        />
+
+        <Text>Tarefa Descrição:</Text>
+        <TextInput 
+          style={[styles.input, styles.textArea]}
+          placeholder='Descrição da tarefa:'
+          multiline
+        />
+
+        <View style={styles.buttonContainer}>
+          <Button style={styles.buttonElement} color="darkgreen" title='Salvar' onPress={() => onMessage()} />
+        </View>
+      </View>
+    
+    </>
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 40, 
+    paddingHorizontal: 16,
+    backgroundColor: '#f4f4f4',
   },
+  label: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginVertical: 20,
+    color: '#333',
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderRadius: 4,
+    borderColor: '#ccc',
+    marginVertical: 10,
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top'
+  },
+  buttonContainer: {
+    marginTop: 16,
+  },
+  buttonElement: {
+    borderRadius: 12
+  }
 });

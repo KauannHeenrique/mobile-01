@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { TaskCard } from './TaskCard';
 
 export default function App() {
   function onMessage() {
@@ -26,6 +27,15 @@ export default function App() {
         <View style={styles.buttonContainer}>
           <Button style={styles.buttonElement} color="darkgreen" title='Salvar' onPress={() => onMessage()} />
         </View>
+
+        <TaskCard
+          title={"Teste"}
+          description={"Descrição"}
+          status={"Done"}
+          onClick={() => {
+            alert("Deletar")
+          }}
+        />
       </View>
     
     </>

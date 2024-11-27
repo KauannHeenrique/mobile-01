@@ -1,19 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, Button, ScrollView } from 'react-native';
 import { TaskCard } from './TaskCard';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getRequest } from './api/Api';
 
 export default function App() {
   const [task, setTask] = useState([]);
   const [taskName, setTaskName] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
-  const [alert1, setAlert1 ] = useState(false);
-  const [alert2, setAlert2 ] = useState(false);
+  const [alert1, setAlert1] = useState(false);
+  const [alert2, setAlert2] = useState(false);
 
   const onMessage = () => {
     if (!taskName.trim()) {
       setAlert1(true);
-      
+
       setTimeout(() => {
         setAlert1(false);
       }, 4000);
@@ -23,7 +24,7 @@ export default function App() {
 
     if (taskDescription.length < 10) {
       setAlert2(true);
-      
+
       setTimeout(() => {
         setAlert2(false);
       }, 4000);
@@ -31,20 +32,19 @@ export default function App() {
       return false;
     }
 
-    const taskObj = {
-      id: task.length + 1,
-      taskName,
-      taskDescription
-    };
-    
     setTask([
       ...task,
-      taskObj
+      {
+        id: task.length + 1,
+        taskName,
+        taskDescription
+      }
     ]);
 
     setTaskName("");
     setTaskDescription("");
   }
+
 
   const deleteTask = (index) => {
     const updateTasks = [...task];
@@ -54,28 +54,41 @@ export default function App() {
     setTask(updateTasks);
   }
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resp = await getRequest();
+        setTask(resp)
+      } catch (ex) {
+        console.error(ex)
+      }
+    };
+
+    fetchData();
+  }, [])
+
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
       <View style={styles.container}>
         <Text style={styles.label}>App de Tarefas</Text>
-        <TextInput 
+        <TextInput
           style={styles.input}
           placeholder="Nome da tarefa:"
-          onChangeText={(value) => setTaskName(value)}
           value={taskName}
+          onChangeText={(value) => setTaskName(value)}
         />
-        { alert1 ? <Text style={styles.errorText}>Valor do nome da tarefa está vazio.</Text> : <></>}
+        {alert1 ? <Text style={styles.errorText}>Valor do nome da tarefa está vazio.</Text> : <></>}
 
         <Text>Tarefa Descrição:</Text>
-        <TextInput 
+        <TextInput
           style={[styles.input, styles.textArea]}
           placeholder='Descrição da tarefa:'
           multiline
-          onChangeText={(value) => setTaskDescription(value)}
           value={taskDescription}
+          onChangeText={(value) => setTaskDescription(value)}
         />
-        { alert2 ? <Text style={styles.errorText}>Descrição presisa ser maior que 10 caracteres.</Text> : <></>}
+        {alert2 ? <Text style={styles.errorText}>Descrição presisa ser maior que 10 caracteres.</Text> : <></>}
 
 
         <View style={styles.buttonContainer}>
@@ -102,7 +115,7 @@ export default function App() {
           }
         </ScrollView>
       </View>
-    
+
     </>
 
   );
@@ -111,7 +124,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 40, 
+    paddingTop: 40,
     paddingHorizontal: 16,
     backgroundColor: '#f4f4f4',
   },

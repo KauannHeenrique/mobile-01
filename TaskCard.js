@@ -2,15 +2,15 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { CircleCheck } from "lucide-react-native";
 import { StyleSheet } from "react-native";
 
-export const TaskCard = ({ title, description, status, onClick }) => {
+export const TaskCard = ({ taskName, taskDescription, status, onClick }) => {
     return (
         <View style={styles.card}>
             <View style={styles.header}>
-                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.title}>{taskName}</Text>
                 <CircleCheck color="green" size={32} />
             </View>
             <Text style={styles.description}>
-                {description}
+                {taskDescription}
             </Text>
 
             <TouchableOpacity style={styles.button} onPress={onClick}>

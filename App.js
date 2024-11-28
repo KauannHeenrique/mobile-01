@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, Button, ScrollView } from 'react-native';
 import { TaskCard } from './TaskCard';
 import { useState, useEffect } from 'react';
-import { getRequest } from './api/Api';
+import { getRequest, deleteRequest, postRequest } from './api/Api';
 
 export default function App() {
   const [task, setTask] = useState([]);
@@ -11,44 +11,42 @@ export default function App() {
   const [alert1, setAlert1] = useState(false);
   const [alert2, setAlert2] = useState(false);
 
-  const onMessage = () => {
-    if (!taskName.trim()) {
-      setAlert1(true);
+  const onMessage = async () => {
 
-      setTimeout(() => {
-        setAlert1(false);
-      }, 4000);
+    setAlert1(false);
+    setAlert2(false);
 
-      return false;
-    }
+    if (taskName !== "" && taskDescription.length >= 10) {
 
-    if (taskDescription.length < 10) {
-      setAlert2(true);
+      let newTask = await postRequest(taskName, taskDescription);
+      setTask([...task, newTask])
 
-      setTimeout(() => {
-        setAlert2(false);
-      }, 4000);
+      setTaskName("");
+      setTaskDescription("");
 
-      return false;
-    }
+    } else {
 
-    setTask([
-      ...task,
-      {
-        id: task.length + 1,
-        taskName,
-        taskDescription
+      if (!taskName.trim()) {
+        setAlert1(true)
+        setTimeout(() => {
+          setAlert1(false);
+        }, 4000);
       }
-    ]);
 
-    setTaskName("");
-    setTaskDescription("");
-  }
+      if (taskDescription.length < 10) {
+        setAlert2(true)
+        setTimeout(() => {
+          setAlert2(false);
+        }, 4000);
+      }
+    }
 
+  };
 
-  const deleteTask = (index) => {
+  const deleteTask = (index, id) => {
     const updateTasks = [...task];
     updateTasks.splice(index, 1);
+    deleteRequest(id);
     setTask([]);
 
     setTask(updateTasks);
@@ -99,19 +97,20 @@ export default function App() {
         }
         <ScrollView>
           {
-            task.map((values, index) => (
-              <>
-                <TaskCard
-                  key={values.id}
-                  title={values.taskName}
-                  description={values.taskDescription}
-                  status={"Done"}
-                  onClick={() => {
-                    deleteTask(index)
-                  }}
-                />
-              </>
-            ))
+            task.map((values, index) => {
+             
+              return (
+                  <TaskCard
+                    key={values.id}
+                    taskName={values.title}
+                    taskDescription={values.description}
+                    status={"Done"}
+                    onClick={() => {
+                      deleteTask(index, values.id)
+                    }}
+                  />
+              )
+            })
           }
         </ScrollView>
       </View>
